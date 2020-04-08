@@ -21,7 +21,15 @@ const covid19ImpactEstimator = (data) => {
   const availableBeds = (data.totalHospitalBeds - bedsAreadyOccupied);
   const hospitalBedsByRequestedTime = availableBeds - severeCasesByRequestedTime;
   const serverehospitalBedsByRequestedTime = availableBeds - ServeresevereCasesByRequestedTime;
-
+  // cases that require ICU care
+  const casesForICUByRequestedTime = (0.05 * infectionsByRequestedTime);
+  const servercasesForICUByRequestedTime = (0.05 * serverinfectionsByRequestedTime);
+  // cases that will require ventilators
+  const casesForVentilatorsByRequestedTime = (0.02 * infectionsByRequestedTime);
+  const servercasesForVentilatorsByRequestedTime = (0.02 * serverinfectionsByRequestedTime);
+  // amount of money to be lost in the economy
+  const dollarsInFlight = (infectionsByRequestedTime * data.avgDailyIncomePopulation) * data.avgDailyIncomeInUSD * estimateTime;
+  const serveredollarsInFlight = (serverinfectionsByRequestedTime * data.avgDailyIncomePopulation) * data.avgDailyIncomeInUSD * estimateTime;
   // return reponse data
   return {
     data: input,
@@ -29,31 +37,37 @@ const covid19ImpactEstimator = (data) => {
       currentlyInfected,
       infectionsByRequestedTime,
       severeCasesByRequestedTime,
-      hospitalBedsByRequestedTime
+      hospitalBedsByRequestedTime,
+      casesForICUByRequestedTime,
+      casesForVentilatorsByRequestedTime,
+      dollarsInFlight
     },
     severeImpact: {
       currentlyInfected: serverCurrentlyInfcted,
       infectionsByRequestedTime: serverinfectionsByRequestedTime,
       severeCasesByRequestedTime: ServeresevereCasesByRequestedTime,
-      hospitalBedsByRequestedTime: serverehospitalBedsByRequestedTime
+      hospitalBedsByRequestedTime: serverehospitalBedsByRequestedTime,
+      casesForICUByRequestedTime: servercasesForICUByRequestedTime,
+      casesForVentilatorsByRequestedTime: servercasesForVentilatorsByRequestedTime,
+      dollarsInFlight: serveredollarsInFlight
     }
   };
 };
 
 
-// const data = {
-//   region: {
-//     name: 'Africa',
-//     avgAge: 19.7,
-//     avgDailyIncomeInUSD: 5,
-//     avgDailyIncomePopulation: 0.71
-//   },
-//   periodType: 'days',
-//   timeToElapse: 58,
-//   reportedCases: 674,
-//   population: 66622705,
-//   totalHospitalBeds: 1380614
-// };
-// covid19ImpactEstimator(data);
+const data = {
+  region: {
+    name: 'Africa',
+    avgAge: 19.7,
+    avgDailyIncomeInUSD: 5,
+    avgDailyIncomePopulation: 0.71
+  },
+  periodType: 'days',
+  timeToElapse: 58,
+  reportedCases: 674,
+  population: 66622705,
+  totalHospitalBeds: 1380614
+};
+covid19ImpactEstimator(data);
 
-export default covid19ImpactEstimator;
+// export default covid19ImpactEstimator;

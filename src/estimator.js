@@ -28,12 +28,10 @@ const covid19ImpactEstimator = (data) => {
   const casesForVentilatorsByRequestedTime = (0.02 * infectionsByRequestedTime);
   const servercasesForVentilatorsByRequestedTime = (0.02 * serverinfectionsByRequestedTime);
   // amount of money to be lost in the economy
-  const dollarsInFlight = (
-    infectionsByRequestedTime * data.avgDailyIncomePopulation)
-     * data.avgDailyIncomeInUSD * estimateTime;
-  const serveredollarsInFlight = (
-    serverinfectionsByRequestedTime * data.avgDailyIncomePopulation)
-     * data.avgDailyIncomeInUSD * estimateTime;
+  const totalIncomePerperson = data.avgDailyIncomeInUSD * estimateTime;
+  const dailyAvgIncome = data.avgDailyIncomePopulation;
+  const dollarsInFlight = (infectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson;
+  const svrDlrsInFlight = (serverinfectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson;
   // return reponse data
   return {
     data: input,
@@ -53,7 +51,7 @@ const covid19ImpactEstimator = (data) => {
       hospitalBedsByRequestedTime: serverehospitalBedsByRequestedTime,
       casesForICUByRequestedTime: servercasesForICUByRequestedTime,
       casesForVentilatorsByRequestedTime: servercasesForVentilatorsByRequestedTime,
-      dollarsInFlight: serveredollarsInFlight
+      dollarsInFlight: svrDlrsInFlight
     }
   };
 };

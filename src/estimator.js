@@ -19,8 +19,10 @@ const covid19ImpactEstimator = (data) => {
   // calculate the number of beds
   const bedsAreadyOccupied = (0.65 * data.totalHospitalBeds);
   const availableBeds = (data.totalHospitalBeds - bedsAreadyOccupied);
-  const hospitalBedsByRequestedTime = availableBeds - severeCasesByRequestedTime;
-  const serverehospitalBedsByRequestedTime = availableBeds - ServeresevereCasesByRequestedTime;
+  const hospitalBedsByRequestedTime = Math.floor(availableBeds - severeCasesByRequestedTime);
+  const serverehospitalBedsByRequestedTime = Math.floor(
+    availableBeds - ServeresevereCasesByRequestedTime
+  );
   // cases that require ICU care
   const casesForICUByRequestedTime = (0.05 * infectionsByRequestedTime);
   const servercasesForICUByRequestedTime = (0.05 * serverinfectionsByRequestedTime);

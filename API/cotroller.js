@@ -13,15 +13,18 @@ exports.covid19ImpactEstimator = async (req, res) => {
       estimateTime = req.body.timeToElapse * 30;
     }
     const setOfDays = Math.floor(estimateTime / 3);
-    const infectionsByRequestedTime = currentlyInfected * (2 ** setOfDays);
-    const serverinfectionsByRequestedTime = serverCurrentlyInfcted * (2 ** setOfDays);
-    const severeCasesByRequestedTime = ((15 / 100) * infectionsByRequestedTime);
-    const ServeresevereCasesByRequestedTime = ((15 / 100) * serverinfectionsByRequestedTime);
+    const infectionsByRequestedTime = Math.floor(currentlyInfected * (2 ** setOfDays));
+    const serverinfectionsByRequestedTime = Math.floor(serverCurrentlyInfcted * (2 ** setOfDays));
+    const severeCasesByRequestedTime = Math.floor(((15 / 100) * infectionsByRequestedTime));
+    const ServeresevereCasesByRequestedTime = Math.floor((
+      (15 / 100) * serverinfectionsByRequestedTime));
     // calculate the number of beds
     const bedsAreadyOccupied = (0.65 * req.body.totalHospitalBeds);
     const availableBeds = (req.body.totalHospitalBeds - bedsAreadyOccupied);
-    const hospitalBedsByRequestedTime = availableBeds - severeCasesByRequestedTime;
-    const serverehospitalBedsByRequestedTime = availableBeds - ServeresevereCasesByRequestedTime;
+    const hospitalBedsByRequestedTime = Math.floor(availableBeds - severeCasesByRequestedTime);
+    const serverehospitalBedsByRequestedTime = Math.floor(
+      availableBeds - ServeresevereCasesByRequestedTime
+    );
     // cases that require ICU care
     const casesForICUByRequestedTime = (0.05 * infectionsByRequestedTime);
     const servercasesForICUByRequestedTime = (0.05 * serverinfectionsByRequestedTime);

@@ -88,6 +88,7 @@ exports.jsonResponder = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line consistent-return
 exports.xmlResponder = async (req, res) => {
   try {
     const response = await covid19ImpactEstimator(req, res);

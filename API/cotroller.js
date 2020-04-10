@@ -13,29 +13,32 @@ exports.covid19ImpactEstimator = async (req, res) => {
       estimateTime = req.body.timeToElapse * 30;
     }
     const setOfDays = Math.floor(estimateTime / 3);
-    const infectionsByRequestedTime = Math.floor(currentlyInfected * (2 ** setOfDays));
-    const serverinfectionsByRequestedTime = Math.floor(serverCurrentlyInfcted * (2 ** setOfDays));
-    const severeCasesByRequestedTime = Math.floor(((15 / 100) * infectionsByRequestedTime));
-    const ServeresevereCasesByRequestedTime = Math.floor((
-      (15 / 100) * serverinfectionsByRequestedTime));
+    const infectionsByRequestedTime = currentlyInfected * (2 ** setOfDays);
+    const serverinfectionsByRequestedTime = serverCurrentlyInfcted * (2 ** setOfDays);
+    const severeCasesByRequestedTime = ((15 / 100) * infectionsByRequestedTime);
+    const ServeresevereCasesByRequestedTime = ((15 / 100) * serverinfectionsByRequestedTime);
     // calculate the number of beds
-    const bedsAreadyOccupied = (0.65 * req.body.totalHospitalBeds);
-    const availableBeds = (req.body.totalHospitalBeds - bedsAreadyOccupied);
-    const hospitalBedsByRequestedTime = Math.ceil(availableBeds - severeCasesByRequestedTime);
-    const serverehospitalBedsByRequestedTime = Math.ceil(
+    const bedsAreadyOccupied = (0.65 * input.totalHospitalBeds);
+    const availableBeds = (input.totalHospitalBeds - bedsAreadyOccupied);
+    const hospitalBedsByRequestedTime = Math.trunc(availableBeds - severeCasesByRequestedTime);
+    const serverehospitalBedsByRequestedTime = Math.trunc(
       availableBeds - ServeresevereCasesByRequestedTime
     );
     // cases that require ICU care
-    const casesForICUByRequestedTime = (0.05 * infectionsByRequestedTime);
-    const servercasesForICUByRequestedTime = (0.05 * serverinfectionsByRequestedTime);
+    const casesForICUByRequestedTime = Math.trunc((0.05 * infectionsByRequestedTime));
+    const servercasesForICUByRequestedTime = Math.trunc((0.05 * serverinfectionsByRequestedTime));
     // cases that will require ventilators
-    const casesForVentilatorsByRequestedTime = (0.02 * infectionsByRequestedTime);
-    const servercasesForVentilatorsByRequestedTime = (0.02 * serverinfectionsByRequestedTime);
+    const casesForVentilatorsByRequestedTime = Math.trunc((0.02 * infectionsByRequestedTime));
+    const servercasesForVentilatorsByRequestedTime = Math.trunc(
+      (0.02 * serverinfectionsByRequestedTime)
+    );
     // amount of money to be lost in the economy
-    const totalIncomePerperson = req.body.region.avgDailyIncomeInUSD * estimateTime;
-    const dailyAvgIncome = req.body.region.avgDailyIncomePopulation;
-    const dollarsInFlight = (infectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson;
-    const svrDollarloss = (serverinfectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson;
+    const totalIncomePerperson = input.region.avgDailyIncomeInUSD * estimateTime;
+    const dailyAvgIncome = input.region.avgDailyIncomePopulation;
+    const dollarsInFlight = (
+      (infectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson);
+    const svrDlrsInFlight = (
+      (serverinfectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson);
     // return reponse req.body
     return res.status(200).json({
       data: input,
@@ -55,10 +58,11 @@ exports.covid19ImpactEstimator = async (req, res) => {
         hospitalBedsByRequestedTime: serverehospitalBedsByRequestedTime,
         casesForICUByRequestedTime: servercasesForICUByRequestedTime,
         casesForVentilatorsByRequestedTime: servercasesForVentilatorsByRequestedTime,
-        dollarsInFlight: svrDollarloss
+        dollarsInFlight: svrDlrsInFlight
       }
     });
   } catch (err) {
+    // console.log(err);
     return res.status(500).json({
       message: 'Internal server error!'
     });

@@ -21,8 +21,8 @@ exports.covid19ImpactEstimator = async (req, res) => {
     // calculate the number of beds
     const bedsAreadyOccupied = (0.65 * req.body.totalHospitalBeds);
     const availableBeds = (req.body.totalHospitalBeds - bedsAreadyOccupied);
-    const hospitalBedsByRequestedTime = Math.floor(availableBeds - severeCasesByRequestedTime);
-    const serverehospitalBedsByRequestedTime = Math.floor(
+    const hospitalBedsByRequestedTime = Math.ceil(availableBeds - severeCasesByRequestedTime);
+    const serverehospitalBedsByRequestedTime = Math.ceil(
       availableBeds - ServeresevereCasesByRequestedTime
     );
     // cases that require ICU care

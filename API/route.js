@@ -4,8 +4,9 @@ const router = express.Router();
 
 const covidController = require('./cotroller');
 
-router.post('/', covidController.covid19ImpactEstimator);
-// router.post('/json', covidController.logout);
-// router.post('/xml', covidController.signupValidation);
+router.post('/', covidController.jsonResponder);
+router.post('/json', covidController.jsonResponder);
+router.post('/xml', covidController.xmlResponder);
+
 
 module.exports = router;

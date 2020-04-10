@@ -1,4 +1,6 @@
-exports.covid19ImpactEstimator = async (req, res) => {
+const jsonxml = require('jsontoxml');
+
+const covid19ImpactEstimator = async (req, res) => {
   try {
     const input = req.body;
     const currentlyInfected = req.body.reportedCases * 10;
@@ -40,7 +42,7 @@ exports.covid19ImpactEstimator = async (req, res) => {
     const svrDlrsInFlight = Math.trunc((
       (serverinfectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson));
     // return reponse req.body
-    return res.status(200).json({
+    return {
       data: input,
       impact: {
         currentlyInfected,
@@ -60,7 +62,7 @@ exports.covid19ImpactEstimator = async (req, res) => {
         casesForVentilatorsByRequestedTime: servercasesForVentilatorsByRequestedTime,
         dollarsInFlight: svrDlrsInFlight
       }
-    });
+    };
   } catch (err) {
     // console.log(err);
     return res.status(500).json({
@@ -70,19 +72,36 @@ exports.covid19ImpactEstimator = async (req, res) => {
 };
 
 
-// const data = {
-//   region: {
-//     name: 'Africa',
-//     avgAge: 19.7,
-//     avgDailyIncomeInUSD: 5,
-//     avgDailyIncomePopulation: 0.71
-//   },
-//   periodType: 'days',
-//   timeToElapse: 58,
-//   reportedCases: 674,
-//   population: 66622705,
-//   totalHospitalBeds: 1380614
-// };
-// covid19ImpactEstimator(data);
+exports.jsonResponder = async (req, res) => {
+  try {
+    const response = await covid19ImpactEstimator(req, res);
+    const { data, impact, severeImpact } = response;
+    return res.status(200).json({
+      data,
+      impact,
+      severeImpact
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Internal server error!'
+    });
+  }
+};
 
-// export default covid19ImpactEstimator;
+exports.xmlResponder = async (req, res) => {
+  try {
+    const response = await covid19ImpactEstimator(req, res);
+    const { data, impact, severeImpact } = response;
+    const xml = jsonxml({
+      data,
+      impact,
+      severeImpact
+    });
+    res.set('Content-Type', 'text/xml');
+    res.send(xml);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Internal server error!'
+    });
+  }
+};

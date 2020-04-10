@@ -28,13 +28,16 @@ const covid19ImpactEstimator = (data) => {
   const servercasesForICUByRequestedTime = Math.trunc((0.05 * serverinfectionsByRequestedTime));
   // cases that will require ventilators
   const casesForVentilatorsByRequestedTime = Math.trunc((0.02 * infectionsByRequestedTime));
-  const servercasesForVentilatorsByRequestedTime = Math.trunc((
-    0.02 * serverinfectionsByRequestedTime));
+  const servercasesForVentilatorsByRequestedTime = Math.trunc(
+    (0.02 * serverinfectionsByRequestedTime)
+  );
   // amount of money to be lost in the economy
   const totalIncomePerperson = data.region.avgDailyIncomeInUSD * estimateTime;
   const dailyAvgIncome = data.region.avgDailyIncomePopulation;
-  const dollarsInFlight = (infectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson;
-  const svrDlrsInFlight = (serverinfectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson;
+  const dollarsInFlight = (
+    (infectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson).toFixed(2);
+  const svrDlrsInFlight = (
+    (serverinfectionsByRequestedTime * dailyAvgIncome) * totalIncomePerperson).toFixed(2);
   // return reponse data
   return {
     data: input,
